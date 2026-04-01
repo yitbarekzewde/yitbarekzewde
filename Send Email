@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>💌 Send Animated Email to Friends</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* animated gradient background */
+    body {
+      min-height: 100vh;
+      background: linear-gradient(-45deg, #078930, #ffe6e0, #ffddd3, #ffe3dc);
+      background-size: 400% 400%;
+      animation: gradientFlow 12s ease infinite;
+      font-family: 'Segoe UI', 'Inter', system-ui, 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      margin: 0;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* floating particles (animated background extras) */
+    .particle {
+      position: fixed;
+      pointer-events: none;
+      background: rgba(255, 140, 100, 0.2);
+      border-radius: 50%;
+      animation: floatParticle linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes floatParticle {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.6;
+      }
+      90% {
+        opacity: 0.4;
+      }
+      100% {
+        transform: translateY(-20vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* main card - with soft glassmorphism and animated border */
+    .mail-card {
+      max-width: 650px;
+      width: 100%;
+      background: rgba(255, 250, 245, 0.94);
+      backdrop-filter: blur(2px);
+      border-radius: 2.5rem;
+      box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+      padding: 1.8rem 2rem 2rem 2rem;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      position: relative;
+      z-index: 2;
+      animation: cardGlow 3s infinite alternate;
+    }
+
+    @keyframes cardGlow {
+      0% {
+        box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 215, 190, 0.5) inset;
+      }
+      100% {
+        box-shadow: 0 35px 60px -15px rgba(226, 120, 70, 0.3), 0 0 0 2px rgba(255, 180, 140, 0.8) inset;
+      }
+    }
+
+    /* header with animated plane + bounce */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid rgba(255, 180, 140, 0.5);
+      padding-bottom: 0.8rem;
+    }
+
+    .plane-icon {
+      font-size: 2.8rem;
+      display: inline-block;
+      animation: floatPlane 2.2s infinite ease-in-out, colorPulse 3s infinite;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+    }
+
+    @keyframes floatPlane {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(3deg); }
+    }
+
+    @keyframes colorPulse {
+      0% { filter: drop-shadow(0 0 2px #ffaa80); }
+      50% { filter: drop-shadow(0 0 12px #ff7a4a); }
+      100% { filter: drop-shadow(0 0 2px #ffaa80); }
+    }
+
+    .header-text h1 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #dd7856, #b95735);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+      animation: textShimmer 3s infinite;
+    }
+
+    @keyframes textShimmer {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    /* form group styling with animated borders */
+    .form-group {
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #bc6a48;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s;
+    }
+
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 60px;
+      border: 2px solid #ffe2d4;
+      background: white;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      outline: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .form-group textarea {
+      border-radius: 28px;
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: #e28862;
+      box-shadow: 0 0 0 4px rgba(226, 136, 98, 0.2), 0 0 0 2px rgba(255, 200, 170, 0.4);
+      transform: scale(1.01);
+      background: #fffefc;
+    }
+
+    /* animated send button (pulse + gradient shift) */
+    .send-wrapper {
+      margin-top: 1.2rem;
+      text-align: center;
+    }
+
+    .send-btn {
+      background: linear-gradient(115deg, #f08a64, #dd6c46);
+      background-size: 200% auto;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 80px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      font-family: inherit;
+      color: white;
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 10px 20px -8px rgba(221, 108, 70, 0.5);
+      letter-spacing: 0.5px;
+      animation: btnPulse 2s infinite;
+    }
+
+    @keyframes btnPulse {
+      0% {
+        box-shadow: 0 10px 20px -8px rgba(221, 108, 70, 0.4);
+        transform: scale(1);
+      }
+      70% {
+        box-shadow: 0 14px 28px -6px rgba(221, 108, 70, 0.7);
+        transform: scale(1.02);
+      }
+      100% {
+        box-shadow: 0 10px 20px -8px rgba(221, 108, 70, 0.4);
+        transform: scale(1);
+      }
+    }
+
+    .send-btn:hover {
+      background-position: right center;
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 22px 32px -12px #dd6c46;
+      animation: none;
+    }
+
+    .send-btn:active {
+      transform: translateY(2px) scale(0.98);
+    }
+
+    /* loading state */
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.4);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* status message with background slide */
+    .status-area {
+      margin-top: 1.4rem;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 500;
+      min-height: 60px;
+    }
+
+    .status-message {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff3ed;
+      padding: 10px 20px;
+      border-radius: 60px;
+      color: #bf6a46;
+      animation: slideInStatus 0.4s ease-out;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .status-message.success {
+      background: #dcfce7;
+      color: #3b7a55;
+      border-left: 4px solid #3b7a55;
+    }
+
+    .status-message.error {
+      background: #ffe6e2;
+      color: #c45a3a;
+      border-left: 4px solid #c45a3a;
+    }
+
+    @keyframes slideInStatus {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* flying envelope animation (more dynamic) */
+    .flying-envelope {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 3.2rem;
+      pointer-events: none;
+      z-index: 1000;
+      animation: flyAway 1.1s forwards cubic-bezier(0.34, 1.2, 0.64, 1);
+      filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2));
+    }
+
+    @keyframes flyAway {
+      0% {
+        opacity: 0;
+        transform: translate(0, 0) rotate(0deg) scale(0.6);
+      }
+      15% {
+        opacity: 1;
+        transform: translate(-10px, -20px) rotate(5deg) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-180px, -200px) rotate(25deg) scale(0.2);
+      }
+    }
+
+    /* shake animation for inputs */
+    .shake-input {
+      animation: shakeError 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes shakeError {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(3px); }
+    }
+
+    .footer-note {
+      margin-top: 1.8rem;
+      text-align: center;
+      font-size: 0.7rem;
+      color: #c68b6c;
+      border-top: 1px solid #ffded0;
+      padding-top: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      animation: fadeInFooter 1s;
+    }
+
+    @keyframes fadeInFooter {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 550px) {
+      .mail-card {
+        padding: 1.3rem;
+      }
+      .send-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- floating particles (background animation) -->
+<div id="particlesContainer"></div>
+
+<div class="mail-card">
+  <div class="header">
+    <div class="plane-icon">✈️💌</div>
+    <div class="header-text">
+      <h1>Send Email</h1>
+      <p>animated colors · glowing buttons · love-filled delivery</p>
+    </div>
+  </div>
+
+  <form id="emailForm" action="javascript:void(0);">
+    <div class="form-group">
+      <label>👥 Friend's email</label>
+      <input type="email" id="toEmail" placeholder="friend@example.com" required autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>📝 Subject</label>
+      <input type="text" id="subject" placeholder="What's it about?" value="Hello from the animated side ✨">
+    </div>
+    <div class="form-group">
+      <label>💬 Your message</label>
+      <textarea id="message" placeholder="Write something magical..."></textarea>
+    </div>
+
+    <div class="send-wrapper">
+      <button type="submit" id="sendButton" class="send-btn">
+        <span>🚀 Send Email</span>
+        <span class="btn-icon">✨💖</span>
+      </button>
+    </div>
+  </form>
+
+  <div class="status-area" id="statusArea"></div>
+  <div class="footer-note">
+    <span> animated background & buttons</span>
+    <span>✦</span>
+    <span>every click sends love</span>
+  </div>
+  <footer>This email sending site is developed by <strong>Yitbarek Zewde</strong></footer>
+</div>
+
+<script>
+  (function() {
+    // ----- floating background particles -----
+    function createParticles() {
+      const container = document.getElementById('particlesContainer');
+      if (!container) return;
+      const particleCount = 28;
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        const size = Math.random() * 25 + 8;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDuration = Math.random() * 12 + 6 + 's';
+        particle.style.animationDelay = Math.random() * 10 + 's';
+        particle.style.background = `radial-gradient(circle, rgba(255,140,100,0.3), rgba(255,100,70,0.1))`;
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        container.appendChild(particle);
+      }
+    }
+    createParticles();
+
+    // DOM elements
+    const toInput = document.getElementById('toEmail');
+    const subjectInput = document.getElementById('subject');
+    const messageInput = document.getElementById('message');
+    const sendBtn = document.getElementById('sendButton');
+    const statusArea = document.getElementById('statusArea');
+    const emailForm = document.getElementById('emailForm');
+
+    let statusTimeout = null;
+
+    function showStatus(message, type = 'info', duration = 3500) {
+      if (statusTimeout) clearTimeout(statusTimeout);
+      statusArea.innerHTML = '';
+      const statusDiv = document.createElement('div');
+      statusDiv.className = `status-message ${type}`;
+      statusDiv.innerHTML = `<span>${type === 'success' ? '🎉' : (type === 'error' ? '⚠️' : '📬')}</span><span>${message}</span>`;
+      statusArea.appendChild(statusDiv);
+      if (duration) {
+        statusTimeout = setTimeout(() => {
+          if (statusArea.firstChild) statusArea.innerHTML = '';
+        }, duration);
+      }
+    }
+
+    function clearStatus() {
+      if (statusTimeout) clearTimeout(statusTimeout);
+      statusArea.innerHTML = '';
+    }
+
+    function shakeElement(element) {
+      element.classList.add('shake-input');
+      setTimeout(() => element.classList.remove('shake-input'), 500);
+    }
+
+    function createFlyingEnvelope() {
+      const envelope = document.createElement('div');
+      envelope.className = 'flying-envelope';
+      envelope.innerHTML = '💌✉️✨';
+      envelope.style.position = 'fixed';
+      envelope.style.bottom = '30px';
+      envelope.style.right = '30px';
+      envelope.style.pointerEvents = 'none';
+      envelope.style.zIndex = '9999';
+      document.body.appendChild(envelope);
+      envelope.addEventListener('animationend', () => envelope.remove());
+    }
+
+    function sendEmailViaMailto() {
+      const to = toInput.value.trim();
+      const subject = subjectInput.value.trim() || "Hello from your friend!";
+      let body = messageInput.value.trim();
+
+      if (!to) {
+        showStatus("Please enter your friend's email address 📧", "error");
+        shakeElement(toInput);
+        return false;
+      }
+
+      const emailPattern = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+      if (!emailPattern.test(to)) {
+        showStatus("That email doesn't look valid — try again ✨", "error");
+        shakeElement(toInput);
+        return false;
+      }
+
+      if (!body) {
+        body = "Hey friend! 🌸\n\nI was thinking about you and wanted to send a little digital hug. Hope you're doing amazing!\n\nSending love your way 💕";
+      }
+
+      // disable button and show loader
+      sendBtn.disabled = true;
+      const originalHTML = sendBtn.innerHTML;
+      sendBtn.innerHTML = `<span class="loader"></span><span>Weaving magic...</span>`;
+
+      showStatus("✨ Preparing your enchanted letter... Opening your mail app", "info", 2000);
+
+      // start flying envelope animation
+      createFlyingEnvelope();
+
+      // add extra color pulse to card background
+      const card = document.querySelector('.mail-card');
+      card.style.transition = 'box-shadow 0.2s';
+      card.style.boxShadow = '0 0 0 3px #ffbba0 inset, 0 20px 30px -10px #dd6c46';
+
+      setTimeout(() => {
+        const mailtoLink = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailtoLink;
+
+        showStatus(`💖 Magical mail prepared for ${to}! Your email app will open. Sent with sparkle.`, "success", 4000);
+
+        setTimeout(() => {
+          sendBtn.disabled = false;
+          sendBtn.innerHTML = originalHTML;
+          card.style.boxShadow = '';
+        }, 1500);
+      }, 400);
+
+      return true;
+    }
+
+    emailForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      sendEmailViaMailto();
+    });
+
+    // Prefill a lovely message if empty (but don't overwrite if user typed)
+    if (!messageInput.value.trim()) {
+      messageInput.value = "Hey wonderful friend! 🌟\n\nI just wanted to send you some animated joy. Hope this email makes you smile!\n\nCan't wait to catch up soon.\n\nWith love, 💌";
+    }
+
+    // small entrance animation for card
+    setTimeout(() => {
+      const card = document.querySelector('.mail-card');
+      if (card) card.style.transform = 'scale(1.01)';
+      setTimeout(() => { if(card) card.style.transform = ''; }, 200);
+    }, 100);
+
+    // additional dynamic: background color transition on button hover (already handled in CSS)
+    // plus random floating hearts? no needed but nice.
+  })();
+</script>
+</body>
+</html>
